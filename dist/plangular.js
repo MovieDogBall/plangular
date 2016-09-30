@@ -469,7 +469,7 @@
             var Player = require('audio-player');
             var hhmmss = require('hhmmss');
 
-            plangular.directive('plangular', ['$timeout', 'plangularConfig', function ($timeout, plangularConfig) {
+            plangular.directive('plangular', ['$timeout', 'plangularConfig', '$ionicPopup', function ($timeout, plangularConfig, $ionicPopup) {
 
                 var client_id = plangularConfig.clientId;
                 var player = new Player();
@@ -535,6 +535,7 @@
                                     }
                                     scope.$apply(function () {
                                         scope.track = createSrc(response);
+                                        console.log(scope.track);
                                         scope.curArtistId = newArtistId;
                                         if (Array.isArray(response)) {
                                             scope.tracks = response.map(function (track) {
@@ -547,19 +548,33 @@
                                             })
                                         }
 
-                                        if (typeof i !== 'undefined' && scope.tracks.length) {
-                                            scope.index = i;
-                                            scope.track = scope.tracks[i];
+                                        if (scope.tracks[i].src) {
+                                            if (typeof i !== 'undefined' && scope.tracks.length) {
+                                                scope.index = i;
+                                                scope.track = scope.tracks[i];
+                                            }
+                                            player.playPause(scope.tracks[i].src);
+                                        } else {
+                                            $ionicPopup.alert({
+                                                title: 'Sorry!',
+                                                template: 'This track is not  available!'
+                                            });
                                         }
-                                        player.playPause(scope.tracks[i].src);
                                     })
                                 })
                             } else {
-                                if (typeof i !== 'undefined' && scope.tracks.length) {
-                                    scope.index = i;
-                                    scope.track = scope.tracks[i];
+                                if (scope.tracks[i].src) {
+                                    if (typeof i !== 'undefined' && scope.tracks.length) {
+                                        scope.index = i;
+                                        scope.track = scope.tracks[i];
+                                    }
+                                    player.playPause(scope.tracks[i].src);
+                                } else {
+                                    $ionicPopup.alert({
+                                        title: 'Sorry!',
+                                        template: 'This track is not available!'
+                                    });
                                 }
-                                player.playPause(scope.tracks[i].src);
                             }
 
 
